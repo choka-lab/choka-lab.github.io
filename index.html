@@ -5,73 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>釣果ラボ 堤防予報</title>
 <meta name="description" content="行ける日の潮回り・満潮干潮・まずめ・風・波から、堤防釣りに行くならどの日のどの時間かを判定します。">
-<style>
-:root{
-  --bg:#f3f6f9; --card:#ffffff; --ink:#14212b; --sub:#5a6b78; --line:#dbe3ea;
-  --sea:#0b5c8c; --sea2:#e3f0f8; --good:#0f8a5f; --ok:#2f7fbf; --mid:#c78a00; --bad:#c0392b;
-  --chip:#eef3f7;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0e161d; --card:#16212b; --ink:#e6edf2; --sub:#9db0bf; --line:#2a3a48;
-    --sea:#5cb3e6; --sea2:#173246; --good:#3ccf95; --ok:#6fb3ec; --mid:#e7b340; --bad:#ff6f61; --chip:#1d2b37;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0e161d; --card:#16212b; --ink:#e6edf2; --sub:#9db0bf; --line:#2a3a48;
-  --sea:#5cb3e6; --sea2:#173246; --good:#3ccf95; --ok:#6fb3ec; --mid:#e7b340; --bad:#ff6f61; --chip:#1d2b37;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;line-height:1.6}
-header{background:var(--sea);color:#fff;padding:18px 16px 14px}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) header{background:#0b3a57}}
-header h1{margin:0;font-size:22px;letter-spacing:.05em}
-header p{margin:2px 0 0;font-size:13px;opacity:.9}
-main{max-width:760px;margin:0 auto;padding:14px 16px 40px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
-label{display:block;font-size:13px;color:var(--sub);margin:0 0 4px}
-select,input,button{font:inherit}
-select,input[type=number]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media (max-width:520px){.row{grid-template-columns:1fr}}
-.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--sea);color:#fff;font-weight:700;cursor:pointer}
-.btn.sub{background:var(--chip);color:var(--ink);border:1px solid var(--line);font-weight:600}
-.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:6px 11px;font-size:14px;cursor:pointer;user-select:none}
-.chip.on{background:var(--sea);color:#fff;border-color:var(--sea)}
-.chip.we{font-weight:700}
-.hint{font-size:12px;color:var(--sub);margin-top:6px}
-#status{font-size:14px;color:var(--sub);margin:6px 0 10px}
-.day{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:start}
-.mark{width:64px;height:64px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:800}
-.mark b{font-size:28px;line-height:1}
-.mark span{font-size:11px;font-weight:600;margin-top:3px}
-.m-s{background:var(--good)} .m-a{background:var(--ok)} .m-b{background:var(--mid)} .m-c{background:var(--bad)}
-.dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}
-.dhead h3{margin:0;font-size:18px}
-.sat{color:#2f6fd0} .sun{color:var(--bad)}
-.tag{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--sea2);color:var(--sea);font-weight:700}
-.best{margin:6px 0 4px;font-weight:700}
-.best small{font-weight:600;color:var(--sub)}
-.facts{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--sub)}
-.facts b{color:var(--ink);font-weight:700}
-.warn{margin-top:6px;font-size:13px;color:var(--bad);font-weight:700}
-.why{margin-top:4px;font-size:12px;color:var(--sub)}
-svg.tide{width:100%;height:58px;display:block;margin-top:8px}
-.top{border:2px solid var(--good)}
-textarea{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-size:14px}
-footer{font-size:12px;color:var(--sub);max-width:760px;margin:0 auto;padding:0 16px 30px}
-footer a{color:var(--sub)}
-.hide{display:none}
-</style>
+<meta property="og:title" content="釣果ラボ 堤防予報">
+<meta property="og:description" content="行くならこの日・この時間。潮・まずめ・風・波から堤防釣りの日を判定。">
+<meta property="og:image" content="https://choka-lab.github.io/img/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
-  <h1>釣果ラボ 堤防予報</h1>
-  <p>行ける日が少ない人のための「行くならこの日・この時間」判定</p>
+  <div class="brand"><img src="img/icon.svg" alt="" width="40" height="40"><div><h1>釣果ラボ 堤防予報</h1>
+  <p>行ける日が少ない人のための「行くならこの日・この時間」判定</p></div></div>
 </header>
 <main>
+  <a class="cta" href="post.html">📣 今週末の投稿画像を作る →</a>
+
   <section class="card">
     <div class="row">
       <div>
@@ -107,6 +55,11 @@ footer a{color:var(--sub)}
     <textarea id="share"></textarea>
     <div class="btns"><button class="btn" id="copy">コピー</button></div>
   </section>
+
+  <section class="card">
+    <label>釣果ラボの SNS</label>
+    <div class="sns" id="sns"></div>
+  </section>
 </main>
 <footer>
   <p>◎＝行くべき（85点以上）　○＝いい日（72点以上）　△＝微妙（55点以上）　×＝やめとけ。潮・風・波・雨と、まずめに潮が動くかを点数にしています。釣れることを約束するものではありません。</p>
@@ -114,64 +67,31 @@ footer a{color:var(--sub)}
   <p>気象・海況データ：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>（CC BY 4.0）</p>
 </footer>
 
+<script src="forecast.js"></script>
 <script>
 (function(){
 "use strict";
-
-// ---------- 釣り場（港の近くの海の点） ----------
-const SPOTS = [
-  ["三重・四日市", 34.96, 136.64], ["三重・津", 34.71, 136.53], ["三重・鳥羽", 34.48, 136.85], ["三重・尾鷲", 34.07, 136.21],
-  ["愛知・名古屋港", 35.04, 136.84], ["愛知・知多（師崎）", 34.70, 136.99], ["愛知・蒲郡", 34.81, 137.22], ["愛知・伊良湖", 34.58, 137.01],
-  ["大阪・南港", 34.63, 135.41], ["大阪・泉南（りんくう）", 34.40, 135.29], ["兵庫・神戸", 34.67, 135.19], ["兵庫・明石", 34.64, 134.99],
-  ["和歌山・和歌山港", 34.22, 135.14], ["和歌山・白浜", 33.68, 135.34],
-  ["静岡・清水港", 35.01, 138.50], ["静岡・浜名湖（舞阪）", 34.68, 137.61],
-  ["神奈川・横浜", 35.45, 139.65], ["千葉・木更津", 35.38, 139.91], ["福井・敦賀", 35.66, 136.07],
-  ["緯度・経度を入れる", null, null]
-];
-
-// ---------- 狙い（時間帯ごとの向き不向きと、風・波の我慢できる強さ） ----------
-// w: 朝まずめ・日中・夕まずめ・夜 の重み（0〜1）
-const FISH = [
-  {name:"アジ（サビキ）",           w:{am:1.0, day:0.5, pm:1.0, night:0.7}, wind:7, wave:1.2},
-  {name:"青物（ショアジギング）",   w:{am:1.0, day:0.4, pm:0.8, night:0.0}, wind:8, wave:1.5},
-  {name:"アオリイカ（エギング）",   w:{am:0.8, day:0.5, pm:1.0, night:0.8}, wind:6, wave:1.2},
-  {name:"キス（ちょい投げ）",       w:{am:0.8, day:1.0, pm:0.6, night:0.1}, wind:6, wave:1.0},
-  {name:"チヌ・メバル（夜釣り）",   w:{am:0.6, day:0.3, pm:0.9, night:1.0}, wind:7, wave:1.2},
-  {name:"なんでも（家族で安全に）", w:{am:0.6, day:1.0, pm:0.7, night:0.0}, wind:5, wave:0.8}
-];
-
-const SLOTS = [["am","朝まずめ"],["day","日中"],["pm","夕まずめ"],["night","夜"]];
-const WD = ["日","月","火","水","木","金","土"];
+const {SPOTS,FISH,GRADE,store,ymd,md,hm,getData,analyze,spotLatLon,SNS} = window.ChokaLab;
 const $ = id => document.getElementById(id);
 
-// ---------- 保存（使えない環境でも動くように） ----------
-const store = {
-  get(k, d){ try{ const v = localStorage.getItem("chokalab_"+k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
-  set(k, v){ try{ localStorage.setItem("chokalab_"+k, JSON.stringify(v)); }catch(e){} }
-};
-
-// ---------- 画面の準備 ----------
 SPOTS.forEach((s,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=s[0]; $("spot").appendChild(o); });
 FISH.forEach((f,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=f.name; $("fish").appendChild(o); });
 $("spot").value = store.get("spot", 0);
 $("fish").value = store.get("fish", 0);
 $("lat").value = store.get("lat", "");
 $("lon").value = store.get("lon", "");
+SNS.forEach(([n,u])=>{ const a=document.createElement("a"); a.href=u; a.target="_blank"; a.rel="noopener"; a.textContent=n; $("sns").appendChild(a); });
+
 let picked = new Set(store.get("days", []));
-let hereLoc = null;
-let last = null;
+let hereLoc = null, last = null;
 
 function toggleCustom(){ $("custom").classList.toggle("hide", SPOTS[+$("spot").value][1] !== null); }
 toggleCustom();
 $("spot").addEventListener("change", ()=>{ hereLoc=null; toggleCustom(); });
 
-function ymd(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function md(s){ const [y,m,d]=s.split("-").map(Number); const w=new Date(y,m-1,d).getDay(); return {txt:m+"/"+d+"("+WD[w]+")", w}; }
-
 function drawDayChips(){
   const box=$("days"); box.innerHTML="";
-  const t=new Date();
-  const valid=new Set();
+  const t=new Date(); const valid=new Set();
   for(let i=0;i<8;i++){
     const d=new Date(t.getFullYear(),t.getMonth(),t.getDate()+i);
     const k=ymd(d); valid.add(k);
@@ -184,131 +104,15 @@ function drawDayChips(){
     c.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();flip();} });
     box.appendChild(c);
   }
-  // 過ぎた日は外す
   let changed=false; [...picked].forEach(k=>{ if(!valid.has(k)){picked.delete(k);changed=true;} });
   if(changed) store.set("days",[...picked]);
 }
 drawDayChips();
 
-// ---------- 潮回り（月齢から） ----------
-const TIDE_NAME = [null,"大潮","大潮","大潮","中潮","中潮","中潮","小潮","小潮","小潮","長潮","若潮","中潮","中潮","大潮","大潮","大潮","大潮","中潮","中潮","中潮","中潮","小潮","小潮","小潮","長潮","若潮","中潮","中潮","大潮","大潮"];
-const TIDE_PT = {"大潮":25,"中潮":19,"若潮":10,"小潮":7,"長潮":4};
-function moonAge(dateStr){
-  const [y,m,d]=dateStr.split("-").map(Number);
-  const jd = Date.UTC(y,m-1,d,3,0)/86400000 + 2440587.5; // 日本の正午
-  const syn = 29.530588853;
-  return (((jd - 2451550.1) % syn) + syn) % syn;
-}
-function tideName(dateStr){
-  const day = Math.min(30, Math.max(1, Math.floor(moonAge(dateStr)) + 1));
-  return TIDE_NAME[day];
-}
-
-// ---------- データ取得 ----------
-async function getData(lat, lon){
-  const q = "latitude="+lat+"&longitude="+lon+"&timezone=Asia%2FTokyo&forecast_days=8";
-  const wx = "https://api.open-meteo.com/v1/forecast?"+q+"&hourly=temperature_2m,precipitation,wind_speed_10m,wind_gusts_10m,wind_direction_10m,weather_code&daily=sunrise,sunset&wind_speed_unit=ms";
-  const sea = "https://marine-api.open-meteo.com/v1/marine?"+q+"&hourly=wave_height,sea_level_height_msl";
-  const [a,b] = await Promise.all([fetch(wx), fetch(sea)]);
-  if(!a.ok) throw new Error("天気のデータが取れませんでした");
-  const W = await a.json();
-  const S = b.ok ? await b.json() : null;
-  return {W,S};
-}
-
-// ---------- 計算 ----------
-const toMin = s => { const t=s.slice(11,16).split(":"); return (+t[0])*60+(+t[1]); };
-const hm = m => { m=Math.round(m); if(m<0)m+=1440; return Math.floor(m/60)%24+":"+String(m%60).padStart(2,"0"); };
-const dirName = deg => ["北","北東","東","南東","南","南西","西","北西"][Math.round(((deg%360)+360)%360/45)%8];
-
-function analyze(data, fish){
-  const W=data.W, S=data.S;
-  const H=W.hourly;
-  const lv = S && S.hourly && S.hourly.sea_level_height_msl ? S.hourly.sea_level_height_msl : null;
-  const wv = S && S.hourly && S.hourly.wave_height ? S.hourly.wave_height : null;
-  const hasTide = lv && lv.some(v=>v!==null);
-
-  // 潮の動き（1時間あたりの変化）の基準＝全期間の上位1割の値
-  let ref=0.3;
-  if(hasTide){
-    const d=[]; for(let i=1;i<lv.length;i++){ if(lv[i]!==null&&lv[i-1]!==null) d.push(Math.abs(lv[i]-lv[i-1])); }
-    d.sort((x,y)=>x-y); if(d.length) ref=Math.max(0.05, d[Math.floor(d.length*0.9)]);
-  }
-
-  // 満潮・干潮（放物線で補間）
-  const ext=[];
-  if(hasTide){
-    for(let i=1;i<lv.length-1;i++){
-      const a=lv[i-1],b=lv[i],c=lv[i+1]; if(a===null||b===null||c===null) continue;
-      const isHi = b>=a && b>c, isLo = b<=a && b<c;
-      if(!isHi && !isLo) continue;
-      const den=(a-2*b+c); const off = den!==0 ? 0.5*(a-c)/den : 0;
-      const h = b - 0.25*(a-c)*off;
-      ext.push({t:H.time[i].slice(0,10), m:toMin(H.time[i])+off*60, h, hi:isHi});
-    }
-  }
-
-  const days=[];
-  W.daily.time.forEach((date,di)=>{
-    const sr=toMin(W.daily.sunrise[di]), ss=toMin(W.daily.sunset[di]);
-    const idx=[]; H.time.forEach((t,i)=>{ if(t.slice(0,10)===date) idx.push(i); });
-    if(idx.length<20) return;
-    const tn=tideName(date);
-    const win={ am:[sr-60, sr+90], day:[sr+90, ss-90], pm:[ss-90, ss+60], night:[ss+60, 23*60] };
-    const slots=[];
-    SLOTS.forEach(([k,label])=>{
-      const wgt=fish.w[k]; if(wgt<=0) return;
-      const [s,e]=win[k];
-      const hs=idx.filter(i=>{ const m=toMin(H.time[i]); return m>=Math.floor(s/60)*60 && m<=e; });
-      if(!hs.length) return;
-      const wind=Math.max(...hs.map(i=>H.wind_speed_10m[i]??0));
-      const gust=Math.max(...hs.map(i=>H.wind_gusts_10m[i]??0));
-      const rain=hs.reduce((a,i)=>a+(H.precipitation[i]??0),0);
-      const thunder=hs.some(i=>(H.weather_code[i]??0)>=95);
-      const wave= wv ? Math.max(...hs.map(i=>wv[i]??0)) : null;
-      const dirs=hs.map(i=>H.wind_direction_10m[i]??0);
-      const dir=dirName(dirs[Math.floor(dirs.length/2)]);
-      let move=0.5, trend="";
-      if(hasTide){
-        let sum=0,n=0; hs.forEach(i=>{ if(i>0&&lv[i]!==null&&lv[i-1]!==null){ sum+=Math.abs(lv[i]-lv[i-1]); n++; } });
-        move = n? Math.min(1, (sum/n)/ref) : 0.5;
-        const first=lv[hs[0]], lastv=lv[hs[hs.length-1]];
-        if(first!==null&&lastv!==null) trend = lastv-first>0.08 ? "上げ潮" : (first-lastv>0.08 ? "下げ潮" : "潮止まり前後");
-      }
-      // 点数
-      const pTide = TIDE_PT[tn];
-      const pMove = 25*move*wgt;
-      let pWind = wind<=3?25 : wind<=5?19 : wind<=fish.wind?10 : wind<=fish.wind+2?3 : 0;
-      let pWave = wave===null?10 : wave<=0.5?15 : wave<=fish.wave?10 : wave<=fish.wave+0.5?3 : 0;
-      let pRain = rain<0.2?10 : rain<2?6 : rain<5?2 : 0;
-      const stop=[];
-      if(wind>fish.wind+2) stop.push("風が強い（"+wind.toFixed(0)+"m/s）");
-      if(gust>15) stop.push("突風（"+gust.toFixed(0)+"m/s）");
-      if(wave!==null && wave>fish.wave+0.5) stop.push("波が高い（"+wave.toFixed(1)+"m）");
-      if(thunder) stop.push("雷のおそれ");
-      if(rain>=10) stop.push("大雨");
-      const score = Math.round(pTide+pMove+pWind+pWave+pRain);
-      slots.push({k,label,s:Math.max(0,s),e:Math.min(24*60-1,e),wind,gust,rain,wave,dir,move,trend,score,stop,
-        why:"潮"+pTide+"・潮の動き"+Math.round(pMove)+"・風"+pWind+"・波"+pWave+"・雨"+pRain});
-    });
-    if(!slots.length) return;
-    const ok=slots.filter(x=>!x.stop.length);
-    const best=(ok.length?ok:slots).slice().sort((a,b)=>b.score-a.score)[0];
-    let grade = best.stop.length ? "c" : best.score>=85 ? "s" : best.score>=72 ? "a" : best.score>=55 ? "b" : "c";
-    const hiLo=ext.filter(x=>x.t===date);
-    const series = hasTide ? idx.map(i=>lv[i]) : null;
-    days.push({date,tn,sr,ss,slots,best,grade,hiLo,series,allStop:!ok.length});
-  });
-  return {days, hasTide};
-}
-
-const GRADE={s:["◎","行くべき"],a:["○","いい日"],b:["△","微妙"],c:["×","やめとけ"]};
-
 function tideSvg(series, best){
   if(!series) return "";
   const vals=series.filter(v=>v!==null); if(vals.length<2) return "";
-  const mn=Math.min(...vals), mx=Math.max(...vals), r=(mx-mn)||1;
-  const W=300,Hh=50;
+  const mn=Math.min(...vals), mx=Math.max(...vals), r=(mx-mn)||1, W=300, Hh=50;
   const pts=series.map((v,i)=>[(i/(series.length-1))*W, v===null?null:4+(1-(v-mn)/r)*(Hh-8)]).filter(p=>p[1]!==null);
   const path=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
   const x1=(best.s/1440)*W, x2=(best.e/1440)*W;
@@ -321,19 +125,20 @@ function tideSvg(series, best){
 function render(res){
   const {days,hasTide}=res;
   const list=$("list"); list.innerHTML="";
-  let show = picked.size ? days.filter(d=>picked.has(d.date)) : days;
+  const show = picked.size ? days.filter(d=>picked.has(d.date)) : days;
   if(!show.length){ list.innerHTML='<div class="card">選んだ日の予報がまだありません（予報は8日先まで）。</div>'; return; }
   const top = show.filter(d=>d.grade!=="c").slice().sort((a,b)=>b.best.score-a.best.score)[0];
   show.forEach(d=>{
     const {txt,w}=md(d.date); const g=GRADE[d.grade]; const b=d.best;
     const hi=d.hiLo.filter(x=>x.hi).map(x=>hm(x.m)).join("・")||"—";
     const lo=d.hiLo.filter(x=>!x.hi).map(x=>hm(x.m)).join("・")||"—";
+    const isTop = top && top.date===d.date;
     const card=document.createElement("section");
-    card.className="card"+(top&&top.date===d.date?" top":"");
+    card.className="card"+(isTop?" top":"");
     card.innerHTML=`<div class="day">
       <div class="mark m-${d.grade}"><b>${g[0]}</b><span>${g[1]}</span></div>
       <div>
-        <div class="dhead"><h3 class="${w===6?"sat":w===0?"sun":""}">${txt}</h3><span class="tag">${d.tn}</span>${top&&top.date===d.date?'<span class="tag">この中でいちばん</span>':""}</div>
+        <div class="dhead"><h3 class="${w===6?"sat":w===0?"sun":""}">${txt}</h3><span class="tag">${d.tn}</span>${isTop?'<span class="tag">この中でいちばん</span>':""}</div>
         ${d.allStop?`<div class="warn">やめとけ：${b.stop.join("・")}</div>`:
         `<div class="best">${hm(b.s)}〜${hm(b.e)}　${b.label}${b.trend?"・"+b.trend:""} <small>${b.score}点</small></div>`}
         <div class="facts">
@@ -348,31 +153,26 @@ function render(res){
       </div></div>`;
     list.appendChild(card);
   });
-  // SNS 用の文
   const spot = hereLoc ? "現在地周辺" : SPOTS[+$("spot").value][0].replace("・"," ");
-  const fish = FISH[+$("fish").value].name;
+  const fish = FISH[+$("fish").value];
   const lines = show.map(d=>{ const {txt}=md(d.date); const g=GRADE[d.grade][0]; const b=d.best;
     return d.allStop ? `${txt} ${g} ${d.tn} やめとけ（${b.stop[0]}）` : `${txt} ${g} ${d.tn} ${hm(b.s)}〜${hm(b.e)} ${b.label}${b.trend?"・"+b.trend:""} 風${b.wind.toFixed(0)}m`; });
-  $("share").value = `【釣果ラボ 堤防予報】\n${spot}／${fish}\n\n${lines.join("\n")}\n\n◎行くべき ○いい日 △微妙 ×やめとけ\n※予報です。現地の状況と安全を優先してください\n#釣果ラボ #堤防釣り #釣り好きな人と繋がりたい`;
+  $("share").value = `【釣果ラボ 堤防予報】\n${spot}／${fish.name}\n\n${lines.join("\n")}\n\n◎行くべき ○いい日 △微妙 ×やめとけ\n※予報です。現地の状況と安全を優先してください\n予報ツール→ choka-lab.github.io\n#釣果ラボ #堤防釣り ${fish.tags}`;
   $("sharebox").classList.remove("hide");
 }
 
 async function run(){
   const si=+$("spot").value, fi=+$("fish").value;
   store.set("spot",si); store.set("fish",fi);
-  let lat,lon;
-  if(hereLoc){ [lat,lon]=hereLoc; }
-  else if(SPOTS[si][1]===null){
-    lat=parseFloat($("lat").value); lon=parseFloat($("lon").value);
-    if(!isFinite(lat)||!isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180){ $("status").textContent="緯度・経度を数字で入れてください。"; return; }
-    store.set("lat",lat); store.set("lon",lon);
-  } else { lat=SPOTS[si][1]; lon=SPOTS[si][2]; }
-  lat=Math.round(lat*100)/100; lon=Math.round(lon*100)/100;
+  let ll;
+  if(hereLoc){ ll=[Math.round(hereLoc[0]*100)/100, Math.round(hereLoc[1]*100)/100]; }
+  else { ll=spotLatLon(si,$("lat").value,$("lon").value);
+    if(!ll){ $("status").textContent="緯度・経度を数字で入れてください。"; return; }
+    if(SPOTS[si][1]===null){ store.set("lat",ll[0]); store.set("lon",ll[1]); } }
   $("status").textContent="予報を取り寄せています…";
   $("go").disabled=true;
   try{
-    const data=await getData(lat,lon);
-    last=analyze(data, FISH[fi]);
+    last=analyze(await getData(ll[0],ll[1]), FISH[fi]);
     $("status").textContent = last.hasTide ? "8日分の判定です。枠で囲んだ日が、選んだ日の中でいちばんです。" : "この場所は潮位の予測が取れなかったため、潮回りだけで判定しています。";
     render(last);
   }catch(e){
