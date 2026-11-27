@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>今週末の投稿画像｜釣果ラボ</title>
-<meta name="description" content="今週末の堤防予報を、SNS に投稿できる画像と文章にまとめます。">
+<title>今週末の予報を画像で｜釣果ラボ</title>
+<meta name="description" content="釣り場と狙いを選ぶと、今週末の堤防予報を1枚の画像にします。保存やシェアもできます。">
 <link rel="icon" href="img/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
-  <div class="brand"><img src="img/icon.svg" alt="" width="40" height="40"><div><h1>今週末の投稿画像</h1>
-  <p>開くたびに最新の予報で、投稿用の画像と文章を作ります　<a href="./">← 堤防予報へ</a></p></div></div>
+  <div class="brand"><img src="img/icon.svg" alt="" width="40" height="40"><div><h1>今週末の予報を画像で</h1>
+  <p>釣り場と狙いを選ぶと、今週末の予報を1枚の画像にします。保存やシェアもできます　<a href="./">← 堤防予報へ</a></p></div></div>
 </header>
 <main>
   <section class="card">
@@ -35,7 +35,7 @@
       <button class="btn sub" id="save">画像を保存</button>
     </div>
     <p class="hint" style="text-align:center">スマホでは「共有」から X や Instagram を選べます。うまくいかないときは「画像を保存」と「文章をコピー」を使ってください。</p>
-    <label for="text" style="margin-top:12px">投稿の文章</label>
+    <label for="text" style="margin-top:12px">シェア用の文章</label>
     <textarea id="text"></textarea>
     <div class="btns"><button class="btn sub" id="copy">文章をコピー</button></div>
   </section>
@@ -167,7 +167,7 @@ async function make(){
     draw(days, spot, FISH[fi], res.hasTide);
     $("text").value=postText(days, spot, FISH[fi]);
     $("out").classList.remove("hide");
-    $("status").textContent="できました。内容を確かめてから投稿してください。";
+    $("status").textContent="できました。保存やシェアができます。";
     lastBlob=await new Promise(r=>$("cv").toBlob(r,"image/png"));
   }catch(e){
     $("status").textContent="予報を取得できませんでした。電波のよい所で「作り直す」を押してください。";
