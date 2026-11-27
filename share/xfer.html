@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><title>画像の受け渡し｜釣果ラボ</title>
+<meta name="robots" content="noindex">
+<style>body{font-family:sans-serif;padding:20px;background:#0b3a57;color:#fff}</style></head>
+<body><p id="s">画像を準備しています…</p>
+<script>
+// 釣果ラボの投稿画像を、開いた側（X・Instagram の投稿画面）へ渡すためのページ
+(async function(){
+  const ALLOW = ["https://x.com","https://www.instagram.com"];
+  const p = new URLSearchParams(location.search);
+  const files = (p.get("f")||"").split(",").filter(f=>/^[\w\-\/]+\.(png|jpg)$/.test(f));
+  const s = document.getElementById("s");
+  if(!window.opener || !files.length){ s.textContent="このページは単独では使いません。"; return; }
+  const out=[];
+  for(const f of files){ const r=await fetch(f); if(!r.ok){ s.textContent="読み込めません: "+f; return; }
+    const b=await r.blob(); out.push({name:f.split("/").pop(), type:b.type, blob:b}); }
+  for(const o of ALLOW){ try{ window.opener.postMessage({chokaFiles:out}, o); }catch(e){} }
+  s.textContent="渡しました。このタブは閉じてかまいません。";
+})();
+</script></body></html>
