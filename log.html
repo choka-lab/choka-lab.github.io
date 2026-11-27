@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>釣果ノート｜釣果ラボ</title>
+<meta name="description" content="釣りに行った日を記録すると、その日の潮・風・波と予報の判定を自動で添えます。◎の日は本当に釣れたのかが、記録から分かります。">
+<meta property="og:title" content="釣果ノート｜釣果ラボ">
+<meta property="og:description" content="行った日の潮・風・波と予報の判定を自動で記録。◎の日は本当に釣れた？">
+<meta property="og:image" content="https://choka-lab.github.io/img/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<style>
+.recs{display:grid;gap:10px}
+.rec{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:start}
+.rec h3{margin:0;font-size:16px}
+.catch{font-size:20px;font-weight:800;margin:2px 0}
+.catch small{font-size:13px;color:var(--sub);font-weight:600}
+.memo{font-size:13px;margin-top:4px;white-space:pre-wrap}
+.mini{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.mini button{font-size:12.5px;padding:6px 10px}
+table.sum{width:100%;border-collapse:collapse;font-size:13.5px}
+table.sum th,table.sum td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+table.sum th{color:var(--sub);font-weight:600;font-size:12.5px}
+table.sum td.n{text-align:right;white-space:nowrap}
+.bar{height:10px;border-radius:5px;background:var(--sea);min-width:2px}
+.big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.big div{background:var(--chip);border-radius:12px;padding:8px 4px}
+.big b{display:block;font-size:24px;line-height:1.2}
+.big span{font-size:12px;color:var(--sub)}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:520px){.r3{grid-template-columns:1fr 1fr}}
+input[type=date],input[type=time],input[type=text],textarea.memo-in{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+textarea.memo-in{min-height:70px}
+.tabs{display:flex;gap:6px;margin:0 0 10px}
+.tabs button{flex:1}
+.tabs .on{background:var(--sea);color:#fff;border-color:var(--sea)}
+h2{font-size:16px;margin:0 0 8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><img src="img/icon.svg" alt="" width="40" height="40"><div><h1>釣果ノート</h1>
+  <p>行った日を記録すると、潮・風・波と予報の判定を自動で添えます　<a href="./">← 堤防予報へ</a></p></div></div>
+</header>
+<main>
+  <div class="tabs">
+    <button class="btn sub on" data-tab="add">記録する</button>
+    <button class="btn sub" data-tab="list">これまで</button>
+    <button class="btn sub" data-tab="sum">当たった？</button>
+  </div>
+
+  <!-- 記録する -->
+  <section class="card" id="t-add">
+    <h2 id="formTitle">釣りに行った日を記録</h2>
+    <div class="row">
+      <div><label for="date">日にち</label><input id="date" type="date"></div>
+      <div><label for="spot">釣り場の地域</label><select id="spot"></select></div>
+    </div>
+    <div id="custom" class="row hide" style="margin-top:10px">
+      <div><label for="lat">緯度</label><input id="lat" type="number" step="0.01" placeholder="34.96"></div>
+      <div><label for="lon">経度</label><input id="lon" type="number" step="0.01" placeholder="136.64"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div><label for="place">釣り場の名前（なくてもよい）</label><input id="place" type="text" maxlength="30" placeholder="例：霞ヶ浦ふ頭"></div>
+      <div><label for="fish">狙い（魚・釣り方）</label><select id="fish"></select></div>
+    </div>
+    <div class="r3" style="margin-top:10px">
+      <div><label for="start">始めた時間</label><input id="start" type="time" value="06:00"></div>
+      <div><label for="end">やめた時間</label><input id="end" type="time" value="09:00"></div>
+      <div><label for="count">釣れた数（匹）</label><input id="count" type="number" min="0" step="1" value="0"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div><label for="kinds">魚の内訳（なくてもよい）</label><input id="kinds" type="text" maxlength="60" placeholder="例：アジ12 サバ3"></div>
+      <div><label for="size">いちばん大きいサイズ（cm）</label><input id="size" type="number" min="0" step="0.5" placeholder="例：18"></div>
+    </div>
+    <div style="margin-top:10px"><label for="memo">メモ（なくてもよい）</label><textarea id="memo" class="memo-in" maxlength="300" placeholder="例：朝まずめだけ回ってきた。仕掛けは6号"></textarea></div>
+    <div class="btns">
+      <button class="btn" id="save">記録する</button>
+      <button class="btn sub hide" id="cancel">直すのをやめる</button>
+    </div>
+    <p class="hint" id="msg">記録すると、その日の潮回り・満潮干潮・風・波と、堤防予報ならその日が ◎○△× のどれだったかを自動で取り寄せて添えます（日にちは今日まで）。</p>
+  </section>
+
+  <!-- これまで -->
+  <section class="hide" id="t-list">
+    <div id="recs" class="recs"></div>
+  </section>
+
+  <!-- 当たった？ -->
+  <section class="hide" id="t-sum">
+    <div id="sum"></div>
+  </section>
+
+  <section class="card">
+    <label>記録のしまい方</label>
+    <p class="hint" style="margin-top:0">記録はこのスマホ（このブラウザ）の中だけに保存され、どこにも送りません。機種変更やブラウザを変える前に「書き出す」でファイルにしておき、新しい方で「読み込む」と引き継げます。</p>
+    <div class="btns">
+      <button class="btn sub" id="export">書き出す</button>
+      <button class="btn sub" id="import">読み込む</button>
+      <input type="file" id="file" accept="application/json,.json" class="hide">
+    </div>
+  </section>
+</main>
+<footer>
+  <p>潮回りは月齢からの目安、満潮・干潮・風・波は Open-Meteo.com の予測・再解析データ（CC BY 4.0）で、現地の実際の値とずれることがあります。</p>
+</footer>
+
+<script src="forecast.js"></script>
+<script>
+(function(){
+"use strict";
+const {CUSTOM,fillSpotSelect,prefTag,SPOTS,FISH,GRADE,store,ymd,md,hm,getDataDay,analyze,spotLatLon} = window.ChokaLab;
+const $ = id => document.getElementById(id);
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+fillSpotSelect($("spot"));
+FISH.forEach((f,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=f.name; $("fish").appendChild(o); });
+$("spot").value = store.get("spot", 0);
+$("fish").value = store.get("fish", 0);
+$("lat").value = store.get("lat", "");
+$("lon").value = store.get("lon", "");
+const today = ymd(new Date());
+$("date").value = today; $("date").max = today;
+const toggleCustom=()=>$("custom").classList.toggle("hide", +$("spot").value!==CUSTOM);
+toggleCustom(); $("spot").addEventListener("change", toggleCustom);
+
+let recs = store.get("log", []);
+let editing = null;
+const saveAll = ()=>store.set("log", recs);
+
+// タブ
+function tab(name){
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on", b.dataset.tab===name));
+  ["add","list","sum"].forEach(k=>$("t-"+k).classList.toggle("hide", k!==name));
+  if(name==="list") drawList();
+  if(name==="sum") drawSum();
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>tab(b.dataset.tab)));
+
+const toM = t => { const [h,m]=(t||"0:0").split(":").map(Number); return h*60+m; };
+
+// 行った時間にいちばん重なる時間帯の判定を拾う
+async function fetchCond(r){
+  const res = analyze(await getDataDay(r.lat, r.lon, r.date), FISH[r.fi]);
+  const d = res.days.find(x=>x.date===r.date);
+  if(!d) return null;
+  let s=toM(r.start), e=toM(r.end); if(e<=s) e+=1440;
+  let pick=null, ov=-1;
+  d.slots.forEach(x=>{ const o=Math.min(e,x.e)-Math.max(s,x.s); if(o>ov){ov=o;pick=x;} });
+  if(!pick || ov<=0) pick=d.best;
+  return { tn:d.tn, grade:d.grade, dayScore:d.best.score, dayLabel:d.best.label,
+    label:pick.label, score:pick.score, stop:pick.stop.length>0, wind:Math.round(pick.wind), dir:pick.dir,
+    wave: pick.wave===null?null:Math.round(pick.wave*10)/10, rain:Math.round(pick.rain*10)/10, trend:pick.trend,
+    hi:d.hiLo.filter(z=>z.hi).map(z=>hm(z.m)), lo:d.hiLo.filter(z=>!z.hi).map(z=>hm(z.m)), tide:res.hasTide };
+}
+
+$("save").addEventListener("click", async ()=>{
+  const date=$("date").value;
+  if(!date){ $("msg").textContent="日にちを入れてください。"; return; }
+  if(date>today){ $("msg").textContent="記録できるのは今日までの日です。"; return; }
+  const si=+$("spot").value, fi=+$("fish").value;
+  const ll=spotLatLon(si,$("lat").value,$("lon").value);
+  if(!ll){ $("msg").textContent="緯度・経度を数字で入れてください。"; return; }
+  const count=Math.max(0, Math.round(+$("count").value||0));
+  const size=$("size").value===""?null:Math.max(0,+$("size").value);
+  store.set("spot",si); store.set("fish",fi);
+  if(si===CUSTOM){ store.set("lat",ll[0]); store.set("lon",ll[1]); }
+  const r = { id: editing || (Date.now().toString(36)+Math.random().toString(36).slice(2,6)),
+    date, si, lat:ll[0], lon:ll[1], spot: si===CUSTOM ? `${ll[0]}, ${ll[1]}` : SPOTS[si][0],
+    place:$("place").value.trim(), fi, start:$("start").value||"", end:$("end").value||"",
+    count, size, kinds:$("kinds").value.trim(), memo:$("memo").value.trim(), cond:null };
+  $("save").disabled=true; $("msg").textContent="その日の潮・風・波を取り寄せています…";
+  try{ r.cond = await fetchCond(r); }catch(e){ r.cond=null; }
+  $("save").disabled=false;
+  const i=recs.findIndex(x=>x.id===r.id);
+  if(i>=0) recs[i]=r; else recs.push(r);
+  recs.sort((a,b)=> (b.date+b.start).localeCompare(a.date+a.start));
+  saveAll();
+  $("msg").textContent = r.cond ? "記録しました。「これまで」で見られます。" : "記録しました。ただ、その日の潮・風・波は取れませんでした（あとで「条件を取り直す」を押してください）。";
+  resetForm(); tab("list");
+});
+
+function resetForm(){
+  editing=null; $("formTitle").textContent="釣りに行った日を記録"; $("save").textContent="記録する"; $("cancel").classList.add("hide");
+  ["place","kinds","size","memo"].forEach(k=>$(k).value=""); $("count").value=0; $("date").value=today;
+}
+$("cancel").addEventListener("click", ()=>{ resetForm(); $("msg").textContent=""; });
+
+function shareText(r){
+  const c=r.cond, f=FISH[r.fi];
+  const where=(r.place?r.place+"（"+r.spot.replace("・"," ")+"）":r.spot.replace("・"," "));
+  const lines=[`【釣果】${md(r.date).txt} ${where}`, `${f.name}　${r.start}〜${r.end}`,
+    `${r.count}匹${r.size?"（最大"+r.size+"cm）":""}${r.kinds?"　"+r.kinds:""}`];
+  if(c) lines.push(`${c.tn}${c.trend?"・"+c.trend:""}　風${c.dir}${c.wind}m${c.wave!==null?"　波"+c.wave+"m":""}`, `堤防予報では ${GRADE[c.grade][0]}${GRADE[c.grade][1]} の日でした`);
+  lines.push("", "釣果ノート→ https://choka-lab.github.io/log.html", `#釣果ラボ #釣果 #堤防釣り ${r.si!==CUSTOM?prefTag(r.si):""} ${f.tags}`.replace(/  +/g," "));
+  return lines.join("\n");
+}
+
+function drawList(){
+  const box=$("recs");
+  if(!recs.length){ box.innerHTML='<div class="card">まだ記録がありません。「記録する」から入れてください。</div>'; return; }
+  box.innerHTML="";
+  recs.forEach(r=>{
+    const c=r.cond, {txt,w}=md(r.date);
+    const el=document.createElement("section"); el.className="card";
+    el.innerHTML=`<div class="rec">
+      ${c?`<div class="mark m-${c.grade}"><b>${GRADE[c.grade][0]}</b><span>予報</span></div>`:`<div class="mark" style="background:var(--sub)"><b>?</b><span>予報</span></div>`}
+      <div>
+        <div class="dhead"><h3 class="${w===6?"sat":w===0?"sun":""}">${txt}</h3>${c?`<span class="tag">${esc(c.tn)}</span>`:""}<span class="hint" style="margin:0">${esc(r.place||r.spot)}</span></div>
+        <div class="catch">${r.count}匹 <small>${r.size?"最大"+r.size+"cm　":""}${esc(FISH[r.fi].name)}　${esc(r.start)}〜${esc(r.end)}</small></div>
+        ${r.kinds?`<div class="hint" style="margin:0">${esc(r.kinds)}</div>`:""}
+        ${c?`<div class="facts"><span>時間帯 <b>${esc(c.label)}${c.trend?"・"+esc(c.trend):""}</b></span><span>点数 <b>${c.score}点</b></span>
+          <span>風 <b>${esc(c.dir)} ${c.wind}m/s</b></span><span>波 <b>${c.wave===null?"—":c.wave+"m"}</b></span>
+          <span>満潮 <b>${c.tide&&c.hi.length?c.hi.join("・"):"—"}</b></span><span>干潮 <b>${c.tide&&c.lo.length?c.lo.join("・"):"—"}</b></span></div>`
+          :`<div class="warn" style="color:var(--sub)">その日の潮・風・波はまだ取れていません</div>`}
+        ${r.memo?`<div class="memo">${esc(r.memo)}</div>`:""}
+        <div class="mini">
+          <button class="btn sub" data-a="share">共有</button>
+          <button class="btn sub" data-a="edit">直す</button>
+          ${c?"":'<button class="btn sub" data-a="cond">条件を取り直す</button>'}
+          <button class="btn sub" data-a="del">消す</button>
+        </div>
+      </div></div>`;
+    el.querySelectorAll("[data-a]").forEach(b=>b.addEventListener("click",()=>act(b.dataset.a,r,b)));
+    box.appendChild(el);
+  });
+}
+
+async function act(a,r,btn){
+  if(a==="del"){ if(!confirm(`${md(r.date).txt} の記録を消します。よろしいですか？`)) return; recs=recs.filter(x=>x.id!==r.id); saveAll(); drawList(); return; }
+  if(a==="edit"){
+    editing=r.id; tab("add");
+    $("date").value=r.date; $("spot").value=r.si; toggleCustom(); if(r.si===CUSTOM){ $("lat").value=r.lat; $("lon").value=r.lon; }
+    ["place","start","end","count","kinds","memo"].forEach(k=>$(k).value=r[k]??""); $("size").value=r.size??""; $("fish").value=r.fi;
+    $("formTitle").textContent="記録を直す"; $("save").textContent="直して記録する"; $("cancel").classList.remove("hide"); $("msg").textContent="";
+    window.scrollTo(0,0); return;
+  }
+  if(a==="cond"){ btn.disabled=true; btn.textContent="取り寄せ中…";
+    try{ r.cond=await fetchCond(r); saveAll(); }catch(e){}
+    drawList(); return; }
+  if(a==="share"){
+    const t=shareText(r);
+    if(navigator.share){ try{ await navigator.share({text:t}); return; }catch(e){ if(e.name==="AbortError") return; } }
+    try{ await navigator.clipboard.writeText(t); btn.textContent="コピーしました"; }catch(e){ prompt("コピーしてください", t); }
+    setTimeout(()=>{btn.textContent="共有";},1500);
+  }
+}
+
+// 当たった？：予報の判定ごとに、釣れた数をくらべる
+function group(key, order){
+  const m=new Map(); order.forEach(k=>m.set(k,[]));
+  recs.filter(r=>r.cond).forEach(r=>{ const k=key(r); if(!m.has(k)) m.set(k,[]); m.get(k).push(r); });
+  return [...m].filter(([,v])=>v.length);
+}
+function table(title, rows, labelOf){
+  if(!rows.length) return "";
+  const avg=v=>v.reduce((a,r)=>a+r.count,0)/v.length;
+  const mx=Math.max(...rows.map(([,v])=>avg(v)),1);
+  return `<section class="card"><h2>${title}</h2><table class="sum">
+    <tr><th>　</th><th class="n">回数</th><th class="n">平均</th><th style="width:38%"></th><th class="n">ボウズ</th></tr>
+    ${rows.map(([k,v])=>{ const a=avg(v), z=v.filter(r=>r.count===0).length;
+      return `<tr><td>${labelOf(k)}</td><td class="n">${v.length}回</td><td class="n">${a.toFixed(1)}匹</td>
+      <td><div class="bar" style="width:${(a/mx*100).toFixed(0)}%"></div></td><td class="n">${Math.round(z/v.length*100)}%</td></tr>`; }).join("")}
+  </table></section>`;
+}
+function drawSum(){
+  const box=$("sum");
+  if(!recs.length){ box.innerHTML='<div class="card">記録がたまると、予報の ◎○△× ごとに釣れた数をくらべられます。</div>'; return; }
+  const total=recs.reduce((a,r)=>a+r.count,0), zero=recs.filter(r=>r.count===0).length;
+  let h=`<section class="card"><div class="big">
+    <div><b>${recs.length}</b><span>釣行</span></div><div><b>${total}</b><span>釣れた数</span></div><div><b>${Math.round(zero/recs.length*100)}%</b><span>ボウズ</span></div></div>
+    ${recs.length<5?'<p class="hint">5回以上たまると、傾向が見えてきます。</p>':""}</section>`;
+  h+=table("予報の判定ごと", group(r=>r.cond.grade,["s","a","b","c"]), k=>`${GRADE[k][0]} ${GRADE[k][1]}`);
+  h+=table("潮回りごと", group(r=>r.cond.tn,["大潮","中潮","小潮","長潮","若潮"]), k=>esc(k));
+  h+=table("時間帯ごと", group(r=>r.cond.label,["朝まずめ","日中","夕まずめ","夜"]), k=>esc(k));
+  h+=table("潮の動きごと", group(r=>r.cond.trend||"不明",["上げ潮","下げ潮","潮止まり前後","不明"]), k=>esc(k));
+  const noCond=recs.filter(r=>!r.cond).length;
+  if(noCond) h+=`<p class="hint">潮・風・波が取れていない記録 ${noCond} 件は、表に入っていません。</p>`;
+  box.innerHTML=h;
+}
+
+// 書き出し・読み込み
+$("export").addEventListener("click", ()=>{
+  const b=new Blob([JSON.stringify({app:"choka-lab-log",v:1,recs},null,1)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="釣果ノート_"+today+".json"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+});
+$("import").addEventListener("click", ()=>$("file").click());
+$("file").addEventListener("change", async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const j=JSON.parse(await f.text()); const add=Array.isArray(j)?j:j.recs;
+    if(!Array.isArray(add)) throw 0;
+    let n=0;
+    add.forEach(r=>{ if(!r||typeof r.id!=="string"||!/^\d{4}-\d\d-\d\d$/.test(r.date)||!SPOTS[r.si]||!FISH[r.fi]) return;
+      r.count=Math.max(0,Math.round(+r.count||0)); r.size=r.size==null||r.size===""?null:(+r.size||null);
+      ["start","end"].forEach(k=>{ if(!/^\d\d:\d\d$/.test(r[k]||"")) r[k]=""; });
+      const c=r.cond;
+      if(c && GRADE[c.grade]){ ["score","dayScore","wind"].forEach(k=>c[k]=Math.round(+c[k]||0)); c.wave=c.wave==null?null:(+c.wave||0);
+        ["hi","lo"].forEach(k=>c[k]=(Array.isArray(c[k])?c[k]:[]).filter(t=>/^\d{1,2}:\d\d$/.test(t))); } else r.cond=null;
+      const i=recs.findIndex(x=>x.id===r.id); if(i>=0) recs[i]=r; else recs.push(r); n++; });
+    recs.sort((a,b)=> (b.date+b.start).localeCompare(a.date+a.start)); saveAll();
+    alert(n+" 件を読み込みました。"); tab("list");
+  }catch(err){ alert("釣果ノートのファイルではないようです。"); }
+  e.target.value="";
+});
+
+if(recs.length) tab("list");
+})();
+</script>
+</body>
+</html>

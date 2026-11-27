@@ -48,9 +48,9 @@
 <script>
 (function(){
 "use strict";
-const {SPOTS,FISH,GRADE,store,md,hm,getData,analyze,spotLatLon} = window.ChokaLab;
+const {fillSpotSelect,prefTag,SPOTS,FISH,GRADE,store,md,hm,getData,analyze,spotLatLon} = window.ChokaLab;
 const $ = id => document.getElementById(id);
-SPOTS.forEach((s,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=s[0]; $("spot").appendChild(o); });
+fillSpotSelect($("spot"));
 FISH.forEach((f,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=f.name; $("fish").appendChild(o); });
 $("spot").value = store.get("spot", 0);
 $("fish").value = store.get("fish", 0);
@@ -148,7 +148,7 @@ function postText(days, spot, fish){
     return d.allStop ? `${txt} ${g}${d.tn}　やめとけ（${b.stop[0]}）` : `${txt} ${g}${d.tn}　${hm(b.s)}〜${hm(b.e)} ${b.label}${b.trend?"・"+b.trend:""}　風${b.wind.toFixed(0)}m`; });
   const best=days.filter(d=>d.grade!=="c").sort((a,b)=>b.best.score-a.best.score)[0];
   const lead = best ? `行くなら${md(best.date).txt}の${best.best.label}！` : "今週末は無理せず、来週に期待…";
-  return `【今週末の堤防予報】${spot}／${fish.name}\n${lead}\n\n${lines.join("\n")}\n\n◎行くべき ○いい日 △微妙 ×やめとけ\n予報ツール→ https://choka-lab.github.io/\n#釣果ラボ #堤防釣り ${fish.tags} #釣り好きな人と繋がりたい`;
+  return `【今週末の堤防予報】${spot}／${fish.name}\n${lead}\n\n${lines.join("\n")}\n\n◎行くべき ○いい日 △微妙 ×やめとけ\n予報ツール→ https://choka-lab.github.io/\n#釣果ラボ #堤防釣り ${prefTag(+$("spot").value)} ${fish.tags} #釣り好きな人と繋がりたい`.replace(/  +/g," ");
 }
 
 let lastBlob=null;

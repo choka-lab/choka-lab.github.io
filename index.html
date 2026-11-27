@@ -19,6 +19,7 @@
 </header>
 <main>
   <a class="cta" href="post.html">📷 今週末の予報を画像で見る・シェアする →</a>
+  <a class="cta" href="log.html">📒 釣果ノート：行った日を記録して、予報が当たったか確かめる →</a>
 
   <section class="card">
     <div class="row">
@@ -59,6 +60,8 @@
   <section class="card">
     <label>釣果ラボの SNS</label>
     <div class="sns" id="sns"></div>
+    <p class="hint">ほしい釣り場がないときは、X か Instagram で「地点リクエスト：〇〇港」と送ってください。順番に増やします。</p>
+    <div class="btns"><a class="btn sub" href="https://x.com/intent/post?text=%40choka_lab%20%E5%9C%B0%E7%82%B9%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%EF%BC%9A" target="_blank" rel="noopener">X で地点をリクエスト</a></div>
   </section>
 </main>
 <footer>
@@ -71,10 +74,10 @@
 <script>
 (function(){
 "use strict";
-const {SPOTS,FISH,GRADE,store,ymd,md,hm,getData,analyze,spotLatLon,SNS} = window.ChokaLab;
+const {fillSpotSelect,prefTag,SPOTS,FISH,GRADE,store,ymd,md,hm,getData,analyze,spotLatLon,SNS} = window.ChokaLab;
 const $ = id => document.getElementById(id);
 
-SPOTS.forEach((s,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=s[0]; $("spot").appendChild(o); });
+fillSpotSelect($("spot"));
 FISH.forEach((f,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=f.name; $("fish").appendChild(o); });
 $("spot").value = store.get("spot", 0);
 $("fish").value = store.get("fish", 0);
@@ -157,7 +160,7 @@ function render(res){
   const fish = FISH[+$("fish").value];
   const lines = show.map(d=>{ const {txt}=md(d.date); const g=GRADE[d.grade][0]; const b=d.best;
     return d.allStop ? `${txt} ${g} ${d.tn} やめとけ（${b.stop[0]}）` : `${txt} ${g} ${d.tn} ${hm(b.s)}〜${hm(b.e)} ${b.label}${b.trend?"・"+b.trend:""} 風${b.wind.toFixed(0)}m`; });
-  $("share").value = `【釣果ラボ 堤防予報】\n${spot}／${fish.name}\n\n${lines.join("\n")}\n\n◎行くべき ○いい日 △微妙 ×やめとけ\n※予報です。現地の状況と安全を優先してください\n予報ツール→ choka-lab.github.io\n#釣果ラボ #堤防釣り ${fish.tags}`;
+  $("share").value = `【釣果ラボ 堤防予報】\n${spot}／${fish.name}\n\n${lines.join("\n")}\n\n◎行くべき ○いい日 △微妙 ×やめとけ\n※予報です。現地の状況と安全を優先してください\n予報ツール→ choka-lab.github.io\n#釣果ラボ #堤防釣り ${hereLoc?"":prefTag(+$("spot").value)} ${fish.tags}`.replace(/  +/g," ");
   $("sharebox").classList.remove("hide");
 }
 

@@ -10,8 +10,32 @@ const SPOTS = [
   ["和歌山・和歌山港", 34.22, 135.14], ["和歌山・白浜", 33.68, 135.34],
   ["静岡・清水港", 35.01, 138.50], ["静岡・浜名湖（舞阪）", 34.68, 137.61],
   ["神奈川・横浜", 35.45, 139.65], ["千葉・木更津", 35.38, 139.91], ["福井・敦賀", 35.66, 136.07],
+  // ここから追加分（番号がずれないよう、増やすときは「緯度・経度を入れる」の前に足す）
+  ["北海道・小樽", 43.20, 141.01], ["宮城・塩釜（松島湾）", 38.31, 141.06], ["新潟・新潟港", 37.96, 139.06], ["石川・金沢港", 36.62, 136.59],
+  ["京都・舞鶴", 35.53, 135.37], ["東京・若洲", 35.62, 139.84], ["神奈川・三浦（城ヶ島）", 35.13, 139.62], ["千葉・館山", 34.99, 139.84],
+  ["静岡・沼津", 35.07, 138.85], ["静岡・焼津", 34.86, 138.33], ["愛知・常滑", 34.88, 136.82], ["三重・鈴鹿（白子）", 34.83, 136.61],
+  ["大阪・岸和田", 34.47, 135.36], ["兵庫・姫路", 34.76, 134.65], ["岡山・玉野（宇野）", 34.48, 133.94], ["広島・広島港", 34.33, 132.46],
+  ["香川・高松", 34.36, 134.05], ["徳島・小松島", 34.01, 134.62], ["高知・浦戸", 33.49, 133.57], ["山口・下関", 33.95, 130.93],
+  ["福岡・博多", 33.62, 130.38], ["長崎・長崎港", 32.73, 129.84], ["鹿児島・鹿児島港", 31.60, 130.57], ["沖縄・那覇", 26.22, 127.66],
   ["緯度・経度を入れる", null, null]
 ];
+const CUSTOM = SPOTS.length - 1;
+// 選択肢の並び（北から）
+const PREF_ORDER = ["北海道","宮城","新潟","石川","福井","京都","東京","神奈川","千葉","静岡","愛知","三重","大阪","兵庫","和歌山","岡山","広島","香川","徳島","高知","山口","福岡","長崎","鹿児島","沖縄"];
+const pref = name => name.split("・")[0];
+// 地域のハッシュタグ（例：#三重釣り）
+const prefTag = si => SPOTS[si] && SPOTS[si][1]!==null ? "#"+pref(SPOTS[si][0])+"釣り" : "";
+function fillSpotSelect(sel){
+  sel.innerHTML="";
+  PREF_ORDER.forEach(pf=>{
+    const g=document.createElement("optgroup"); g.label=pf;
+    SPOTS.forEach((s,i)=>{ if(s[1]!==null && pref(s[0])===pf){ const o=document.createElement("option"); o.value=i; o.textContent=s[0]; g.appendChild(o); } });
+    if(g.children.length) sel.appendChild(g);
+  });
+  const o=document.createElement("option"); o.value=CUSTOM; o.textContent=SPOTS[CUSTOM][0]; sel.appendChild(o);
+}
+// 前の版で「緯度・経度を入れる」が 19 番だった名残りを直す
+(function(){ try{ if(localStorage.getItem("chokalab_spot")==="19" && localStorage.getItem("chokalab_spotv")===null){ localStorage.setItem("chokalab_spot", String(CUSTOM)); } localStorage.setItem("chokalab_spotv","2"); }catch(e){} })();
 
 // 狙い（時間帯ごとの向き不向き w、我慢できる風 m/s・波 m、投稿用のタグ）
 const FISH = [
@@ -58,6 +82,19 @@ async function getData(lat, lon){
   const W = await a.json();
   const S = b.ok ? await b.json() : null;
   return {W,S};
+}
+
+// 過去（や近い先）の1日分。前後1日も取って満潮・干潮の山を拾えるようにする
+async function getDataDay(lat, lon, date){
+  const d0=new Date(date+"T12:00:00"), today=new Date();
+  const sh=n=>ymd(new Date(d0.getFullYear(),d0.getMonth(),d0.getDate()+n));
+  const ago=(today-d0)/86400000;
+  const q="latitude="+lat+"&longitude="+lon+"&timezone=Asia%2FTokyo&start_date="+sh(-1)+"&end_date="+sh(1);
+  const vars="&hourly=temperature_2m,precipitation,wind_speed_10m,wind_gusts_10m,wind_direction_10m,weather_code&daily=sunrise,sunset&wind_speed_unit=ms";
+  const base = ago>85 ? "https://archive-api.open-meteo.com/v1/archive?" : "https://api.open-meteo.com/v1/forecast?";
+  const [a,b] = await Promise.all([fetch(base+q+vars), fetch("https://marine-api.open-meteo.com/v1/marine?"+q+"&hourly=wave_height,sea_level_height_msl")]);
+  if(!a.ok) throw new Error("その日の天気のデータが取れませんでした");
+  return {W: await a.json(), S: b.ok ? await b.json() : null};
 }
 
 function analyze(data, fish){
@@ -150,5 +187,5 @@ const SNS = [
   ["TikTok","https://www.tiktok.com/@choka_lab"]
 ];
 
-global.ChokaLab = {SPOTS,FISH,SLOTS,WD,GRADE,store,ymd,md,hm,toMin,tideName,getData,analyze,spotLatLon,SNS};
+global.ChokaLab = {CUSTOM,pref,prefTag,fillSpotSelect,getDataDay,SPOTS,FISH,SLOTS,WD,GRADE,store,ymd,md,hm,toMin,tideName,getData,analyze,spotLatLon,SNS};
 })(window);
