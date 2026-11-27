@@ -127,8 +127,10 @@ function draw(days, spot, fish, hasTide){
     // 1段目：満潮・干潮（2列）、2段目：風・波・雨・日の出（4列）
     const fy=y+Math.max(300, ch-150);
     facts.forEach((f,j)=>{
-      const row = j<2 ? 0 : 1, cols = row===0 ? 2 : 4, k = row===0 ? j : j-2;
-      const colW=(w-72)/cols, cx=x+36+k*colW, cy=fy+row*64;
+      const row = j<2 ? 0 : 1, k = row===0 ? j : j-2;
+      // 2段目は風を広めに（風・波・雨・日の出 = 32%・21%・21%・26%）
+      const fr = row===0 ? [0,.5,1] : [0,.32,.53,.74,1];
+      const inner=w-72, colW=(fr[k+1]-fr[k])*inner, cx=x+36+fr[k]*inner, cy=fy+row*64;
       ctx.fillStyle="#5a6b78"; ctx.font=`600 28px ${FONT}`; ctx.fillText(f[0],cx,cy);
       const lw=ctx.measureText(f[0]).width+12;
       ctx.fillStyle="#14212b"; fitText(ctx,f[1],colW-lw-16,34,800);
@@ -191,6 +193,15 @@ $("copy").addEventListener("click", async ()=>{
   const t=$("text"); try{ await navigator.clipboard.writeText(t.value); }catch(e){ t.select(); try{document.execCommand("copy");}catch(_){} }
   $("copy").textContent="コピーしました"; setTimeout(()=>{$("copy").textContent="文章をコピー";},1500);
 });
+// ?raw=1 のときは画像だけを原寸で表示（画像の書き出し用）
+if(new URLSearchParams(location.search).get("raw")){
+  document.body.style.margin="0"; document.body.style.background="#000";
+  document.querySelector("header").style.display="none"; document.querySelector("footer").style.display="none";
+  document.querySelectorAll("main > section.card:first-child, #status, #out .btns, #out .hint, #out label, #text").forEach(e=>e.style.display="none");
+  const m=document.querySelector("main"); m.style.padding="0"; m.style.maxWidth="none";
+  const o=$("out"); o.style.cssText="padding:0;border:0;margin:0;background:none";
+  const cv=$("cv"); cv.style.cssText="width:1080px;max-width:none;border:0;border-radius:0;display:block";
+}
 // アイコンを読み込んでから作る
 if(iconImg.complete) make(); else { iconImg.onload=()=>{icon=iconImg; make();}; iconImg.onerror=make; }
 })();
